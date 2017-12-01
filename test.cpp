@@ -16,18 +16,13 @@ double get_distance(Point2f pointO, Point2f pointA);
 
 int main()
 {
-	//¶ÁĞ´ÊÓÆµ
+	//è¯»å†™è§†é¢‘
 	VideoCapture cap("1.mov");
 	if (!cap.isOpened()){
 		cout << "open fail"<<endl;
 		return -1;
 	}
-	/*Size s(640, 480);
-	VideoWriter writer = VideoWriter("mov2.avi",CV_FOURCC('M','J','P','G'),30,s);
-	if (!writer.isOpened()){
-		cout << "Creat Fail"<<endl;
-		return -1;
-	}*/
+	
 	while (1){
 		Mat frame; 
 		Rect rightRect(640, 0, 640, 480);
@@ -61,32 +56,24 @@ void thresh_callback(int, void*)
 	Point2f rect_points_temp[4];
 	Point2f points_final[4];
 
-	/// ¶şÖµ»¯  
+	/// äºŒå€¼åŒ–  
 	threshold(src_gray, threshold_output, 250, 255, THRESH_BINARY);
-	/// Ñ°ÕÒÂÖÀª  
+	/// å¯»æ‰¾è½®å»“  
 	findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
 
-	/// ¶ÔÃ¿¸öÕÒµ½µÄÂÖÀª´´½¨¿ÉÇãĞ±µÄ±ß½ç¿ò  
+	/// å¯¹æ¯ä¸ªæ‰¾åˆ°çš„è½®å»“åˆ›å»ºå¯å€¾æ–œçš„è¾¹ç•Œæ¡†  
 	vector<RotatedRect> minRect(contours.size());
 	vector<RotatedRect> minEllipse(contours.size());
 
 	for (int i = 0; i < contours.size(); i++)
 	{
-		//»ñÈ¡ÂÖÀªËÄ¸öµã×ø±ê
+		//è·å–è½®å»“å››ä¸ªç‚¹åæ ‡
 		minRect[i] = minAreaRect(Mat(contours[i]));
-		//Size2f size = minRect[i].size;
+
 		double height = minRect[i].size.height;
-		//roa_temp = minRect[i];
-		/*Point2f vertices[4];
-		minRect[i].points(vertices);
-		if ((vertices[0].y - vertices[1].y) < (vertices[1].x - vertices[2].x))
-			minRect[i] = minAreaRect(Mat(contours[i+1]));
-		/*if (contours[i].size() > 5)
-		{
-			minEllipse[i] = fitEllipse(Mat(contours[i]));
-		}*/
+		
 	}
-	//¸ù¾İ¾ØĞÎ¸ß¶ÈÃ°ÅİÅÅĞò
+	//æ ¹æ®çŸ©å½¢é«˜åº¦å†’æ³¡æ’åº
 	for (int j = 0; j < contours.size(); j++){
 		for (int i = contours.size()-1; i > j; i--){
 			if (minRect[i].size.height > minRect[i - 1].size.height){
@@ -97,54 +84,12 @@ void thresh_callback(int, void*)
 		}
 	}
 
-	/*for (int j = 0; j < 4; j++){
-		Point2f para1[4];
-		minRect[j].points(para1);
-		for (int i = 3; i >j ; i--){
-			Point2f para2[4];
-			minRect[i].points(para2);
-			if (((para1[0].y - para1[1].y) / (para1[0].x - para1[1].x)) == ((para2[0].y - para2[1].y) / (para2[0].y - para2[1].y))){
-				RotatedRect roa_temp = minRect[0];
-				minRect[0] = minRect[i];
-				minRect[i] = roa_temp;
-				roa_temp = minRect[1];
-				minRect[1] = minRect[j];
-				minRect[j] = roa_temp;
-				flag1 = j;
-				flag2 = i;
-			}
-		}
-	}*/
-	//Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
-	//
-	/*for (int i = 0; i< contours.size(); i++)
-	{
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-		minRect[i].points(rect_points_temp);
-		minRect[i].points(rect_points);
-		if (minRect[i].size.height> distance){
-			distance = minRect[i].size.height;
-			temp_num = i;
-		}
-	}*/
-	/*for (int i = 0; i< contours.size(); i++)
-	{
-		if (i == temp_num) continue;
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-		minRect[i].points(rect_points_temp);
-		minRect[i].points(rect_points);
-		double a, b;
-		a = get_distance(rect_points[0], rect_points[1]);
-		b = get_distance(rect_points[1], rect_points[2]);
-		if (get_distance(rect_points_temp[0], rect_points_temp[1]) > distance){
-			distance = get_distance(rect_points_temp[0], rect_points_temp[1]);
-			temp_num = i;
-		}
-	}*/
+	
+	
 	Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 	minRect[0].points(rect_points);
 	minRect[1].points(rect_points_temp);
-	//ÇøÁ½¸ö¾ØĞÎÄÚ²àËÄµãÖØĞÂ»æÖÆ¾ØĞÎ
+	//åŒºä¸¤ä¸ªçŸ©å½¢å†…ä¾§å››ç‚¹é‡æ–°ç»˜åˆ¶çŸ©å½¢
 	if (rect_points[0].x < rect_points_temp[0].x){
 		points_final[0] = rect_points[3];
 		points_final[1] = rect_points[2];
@@ -159,23 +104,7 @@ void thresh_callback(int, void*)
 	}
 	for (int j = 0; j < 4; j++)
 		line(src, points_final[j], points_final[(j + 1) % 4], color, 5, 16);
-	cout <<"ÖĞĞÄ×ø±ê  "<< (points_final[0] + points_final[1] + points_final[2] + points_final[3]) / 4 << endl;
-	/*for (int i = 0; i < contours.size(); i++){
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-		minRect[i].points(rect_points_temp);
-		minRect[i].points(rect_points);
-		if (i == temp_num){
-			for (int j = 0; j < 4; j++)
-				line(src, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
-		}
-	}*/
+	cout <<"ä¸­å¿ƒåæ ‡  "<< (points_final[0] + points_final[1] + points_final[2] + points_final[3]) / 4 << endl;
+	
 }
-//¼ÆËãÁ½µã¾àÀë£¬Ã»ÓÃÉÏ
-double get_distance(Point2f pointO, Point2f pointA)
-{
-	double distance;
-	distance = powf((pointO.x - pointA.x), 2) + powf((pointO.y - pointA.y), 2);
-	distance = sqrtf(distance);
 
-	return distance;
-}
